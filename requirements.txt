@@ -1,0 +1,13 @@
+torch>=2.0.0
+torchaudio
+transformers
+numpy
+scipy
+librosa
+soundfile
+tqdm
+matplotlib
+pyyaml
+numba
+# hifigan dependencies
+nnabla
