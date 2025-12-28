@@ -14,3 +14,4 @@ class TransformerEncoder(torch.nn.Module):
         outputs = self.model(waveforms, attention_mask=attention_mask)
         # last_hidden_state: (batch, seq_len, hidden_dim)
         return outputs.last_hidden_state
+

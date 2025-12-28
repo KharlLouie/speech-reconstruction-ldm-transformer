@@ -9,13 +9,22 @@ class SpeechReconstructionModel(nn.Module):
         super().__init__()
         self.encoder = TransformerEncoder(model_name=encoder_name)
         # wav2vec2-base hidden dim = 768
-        self.decoder = SimpleDiffusionDecoder(input_dim=768, hidden_dim=512, mel_bins=80)
+        self.decoder = SimpleDiffusionDecoder(
+            input_dim=768,
+            hidden_dim=512,
+            mel_bins=80
+        )
         self.vocoder = HiFiGANWrapper(device=device)
 
+    def forward(self, waveforms, return_mel=False):
+        """
+        waveforms: (batch, time)
+        """
+        latents = self.encoder(waveforms)      # (B, T, 768)
+        mel = self.decoder(latents)             # (B, 80)
+        audio = self.vocoder(mel)               # (B, time)
 
-def forward(self, waveforms):
-    # waveforms: (batch, time)
-    latents = self.encoder(waveforms)
-    mel = self.decoder(latents)
-    audio = self.vocoder(mel)
-    return audio
+        if return_mel:
+            return audio, mel
+
+        return audio

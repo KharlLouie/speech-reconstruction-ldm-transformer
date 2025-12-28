@@ -6,6 +6,11 @@ import torch
 import torch.nn as nn
 
 class SimpleDiffusionDecoder(nn.Module):
+    """
+    Lightweight diffusion-inspired latent decoder.
+    Acts as a latent-to-mel-spectrogram generator.
+    """
+
     def __init__(self, input_dim=768, hidden_dim=512, mel_bins=80):
         super().__init__()
         self.net = nn.Sequential(
@@ -16,14 +21,17 @@ class SimpleDiffusionDecoder(nn.Module):
             nn.Linear(hidden_dim, mel_bins),
         )
 
+    def forward(self, latents):
+        """
+        latents: (batch, seq_len, dim) from Transformer encoder
+        Returns: (batch, mel_bins)
+        """
 
-def forward(self, latents):
-    # latents: (batch, seq_len, dim) -> average pool over seq
-    if latents.dim() == 3:
-        x = latents.mean(dim=1)
-    else:
-        x = latents
+        # Pool across time dimension
+        if latents.dim() == 3:
+            x = latents.mean(dim=1)  # (batch, dim)
+        else:
+            x = latents
+
         mel = self.net(x)
-        # mel shape (batch, mel_bins)
-        # expand to (batch, mel_bins, time) if necessary; here we return (batch, mel_bins)
         return mel
